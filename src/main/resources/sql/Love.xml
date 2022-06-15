@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lovens">
+
+    <!-- 관심상품에 동일한 상품이 있는 지 확인 -->
+    <select id="findLoveProduct" parameterType="love" resultType="String">
+    	select decode(count(*), 0, 'false', 'true') from love 
+    	where m_email=#{m_email} and p_no=#{p_no}
+    </select>
+    
+    <!-- 관심상품 등록 -->
+    <insert id="insert" parameterType="love">
+    	insert into love values (love_seq.nextval,'${m_email}',${p_no})
+    </insert>
+
+	<select id="getTotal" parameterType="String" resultType="int">
+		select count(*) from love where m_email=#{m_email}
+	</select>
+
+	<!-- 관심상품들의 상점목록 -->
+	<select id="getShopNo" parameterType="String" resultType="love">
+		select distinct p.s_no, s_name from love l,product p,shop s 
+		where l.p_no=p.p_no and p.s_no=s.s_no and l.m_email = #{m_email}
+	</select>
+	
+ 	<!-- 관심상품 목록 -->
+	<select id="list" parameterType="String" resultType="love">
+		select l.*, p.*,s.s_name,pi.p_img from love l, product p, shop s, product_img pi where l.p_no=p.p_no 
+		and p.s_no=s.s_no and p.p_no=pi.p_no and pi.p_img_order=1 and l.m_email=#{m_email} 
+		order by p.p_name
+	</select>
+	
+	<!-- 관심상품 개별 삭제 -->
+	<delete id="delete" parameterType="int">
+		delete from love where love_no = #{love_no}
+	</delete>
+	
+	<!-- 관심상품 전체 삭제 -->
+	<delete id="allDelete" parameterType="String">
+		delete from love where m_email=#{m_email}
+	</delete>
+
+</mapper>

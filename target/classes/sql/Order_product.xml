@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="order_product">
+
+<!-- 주문 목록 -->
+<select id="orderList" parameterType="order_product" resultType="order_product">
+select * from (select a.*, rowNum rn from(
+	select
+		OP.op_no as op_no,
+	    OP.o_no as o_no,
+	    OP.p_no as p_no, 
+	    OP.op_type as op_type,
+	    OP.op_qty as op_qty,
+	    OP.op_price as op_price,
+	    OP.op_status as op_status,
+	    OP.op_deli_no as op_deli_no,
+	    OP.m_email as m_email,
+	    OT.o_date as o_date,
+	    PI.p_img as p_img,
+	    P.p_name as p_name,
+	    OP.s_no as s_no
+	
+	from order_product OP
+	    left join product P on OP.p_no = P.p_no
+	    left join order_tab OT on OP.o_no = OT.o_no
+	    left join product_img PI on OP.p_no = PI.p_no and PI.p_img_order=1
+	    left join shop S on OP.s_no = S.s_no
+	
+	where OP.m_email = #{m_email}  
+	order by OT.o_date desc) a )
+	
+ where rn between #{startRow} and #{endRow}
+
+</select>
+
+<!-- 회원 주문 개수 구하기 -->
+<select id="getTotal" parameterType="String" resultType="int">
+select count(*) from order_product where m_email = #{m_email}
+</select>
+
+
+<!-- 주문 상세 -->
+<select id="orderDetail" parameterType="int" resultType="order_product">
+select 
+    OP.op_no as op_no,
+    OP.o_no as o_no,
+    OP.op_type as op_type,
+    OP.op_qty as op_qty,
+    OP.op_price as op_price,
+    OP.op_status as op_status,
+    OP.op_deli_no as op_deli_no,
+    OP.m_email as m_email,
+    OT.o_date as o_date,
+    OT.d_msg as d_msg,
+    OT.o_total_price as o_total_price,
+    OT.o_sale_price as o_sale_price,
+    OT.o_pay_price as o_pay_price,
+    OT.o_pay_type as o_pay_type,
+    OT.o_deli_price as o_deli_price,
+    PI.p_img as p_img,
+    PI.p_img_order as p_img_order,
+    P.p_name as p_name,
+    D.d_name as d_name,
+    D.d_tel as d_tel,
+    D.d_post as d_post,
+    D.d_address as d_address
+    
+from order_product OP
+    left join product P on OP.p_no = P.p_no
+    left join order_tab OT on OP.o_no = OT.o_no
+    left join product_img PI on OP.p_no = PI.p_no and PI.p_img_order=1
+    left join delivery D on OP.d_no = D.d_no
+
+where OP.op_no = #{op_no} 
+</select>
+
+<!-- 주문 상세 페이지 내부 주문 목록 -->
+<select id="detailList" parameterType="int" resultType="order_product">
+select 
+    OP.op_no as op_no,
+    OP.o_no as o_no,
+    OP.p_no as p_no,
+    OP.op_type as op_type,
+    OP.op_qty as op_qty,
+    OP.op_price as op_price,
+    OP.op_status as op_status,
+    OP.m_email as m_email,
+    OT.o_date as o_date,
+    PI.p_img as p_img,
+    P.p_name as p_name,
+    OP.s_no as s_no,
+    S.s_name as s_name
+
+from order_product OP
+    left join product P on OP.p_no = P.p_no
+    left join order_tab OT on OP.o_no = OT.o_no
+    left join product_img PI on OP.p_no = PI.p_no and PI.p_img_order=1
+    left join shop S on OP.s_no = S.s_no
+
+where OP.o_no = #{o_no}
+order by OP.op_no asc
+</select>
+
+<!-- 주문 취소 -->
+<update id="cancel" parameterType="int">
+	update order_product set op_status = '4', op_cancel_date = sysdate where op_no = #{op_no}
+</update>
+
+<!-- 환불 사유 DB 저장 -->
+<update id="refundForm" parameterType="order_product">
+	update order_product set op_refund_why = #{op_refund_why}, op_status = '8' where op_no = #{op_no}
+</update>
+
+<!-- 구매확정 -->
+<update id="confirm" parameterType="int">
+	update order_product set op_status = '11', op_confirm_date = sysdate where op_no = #{op_no}
+</update>
+
+<!-- 상점명 구해오기 -->
+<select id="shopInfo" parameterType="order_product" resultType="order_product">
+select 
+	S.s_name as s_name
+from order_product OP 
+	left join shop S on OP.s_no = S.s_no
+
+where S.s_no = #{s_no} and OP.op_no = #{op_no}
+</select>
+
+<!-- 환불 신청 리스트 불러오기 -->
+<select id="refundList" resultType="order_product">
+	select * from order_product where op_status=8
+</select>
+	
+
+</mapper>

@@ -1,0 +1,163 @@
+
+@charset "UTF-8";
+<script>
+/* 본문전체 적용(배경색, 폰트)   */
+	* { box-sizing: border-box;	}	
+	body  { background: #fff; font-family: 'Nanum Gothic', sans-serif; padding: 5px;	}
+/******************* header (logo + 메인 menu부분) *********************/
+
+/* 헤더부분 (아래쪽 메뉴) */	
+	.vf_header_menu { background-color: #fff; height:35px;  margin:0px;}
+	.vf_header_menu a: { text-decoration: none; color:#555; font-size:15px; }
+	.vf_header_menu a:hover {font-weight: bold;}
+	.vf_header_menu div { background-color: #fff; float: left; text-align: center;
+							margin: 0px; padding:5 0 0 0; width: 19%}
+
+/* 검색용 (input 태그) */	
+	.vf_search {border-radius:15px; background-color: #ddd; height: 28px;}
+
+/******************* menu (sub menu부분) *********************/
+				
+/* 네비게이션 (관리자페이지, SHOP매니저, 마이페이지 메뉴부분) */	
+	.vf_sub_menu { background-color: #31AA4D; height:27px; padding:2px; display:block }
+	.vf_sub_menu a { color: #fff; text-decoration: none;}
+	.vf_sub_menu a:hover { color: #000;}
+	.vf_sub_menu div { float: left; text-align: center; padding: 1px;}
+
+/******************* body (본문부분) ***********************/
+	
+/*1. 가장 바깥쪽은 기본 부트스트랩 container사용(화면비율에 따라 폭 자동조절) : <div class="container">*/	
+
+/*2. 폭이 넓을 때와 좁을 때 다른 내용을 보여줘야 할 경우 : container안에 아래 div삽입
+						폭이 넓은 스크린 <div class="vf-wide-screen">
+						폭이 좁은 스크린 <div class="vf-less-wide-screen">*/	
+	.vf-wide-screen{ display: flex; }
+	.vf-less-wide-screen{ display: none; }
+	
+/*3. 한 화면에 좌우로 2가지 내용을 담을 경우(화면이 좁아지면 오른쪽 내용이 아래로 내려옴)
+		container안에 아래 div삽입 : 
+						왼쪽 <div class="vf-left">
+						오른쪽 <div class="vf-right">*/		
+	.vf-left { float: left; width: 40%; background-color: #fff; padding: 10 0 0 0; }
+	.vf-right { float: left; width: 60%; background-color: #fff; padding: 10 0 0 0; }
+
+
+/*4. 기타 폭이 다른 div를  container안에 넣고 싶을 경우 : 아래 3가지 폭을 card를 이용한다		*/
+	.vf-card  {	padding: 10px;	margin-top: 0px; }
+	.vf-wide700-card { width: 70%; }
+	.vf-wide500-card { width: 50%; }
+	.vf-wide300-card { width: 30%; }
+
+/* 풋터 (하단설명부분) */
+	.vf-footer  {padding: 10px;	text-align: center;	background: white;	margin-top: 20px; }
+
+/* 부트스트랩  버튼변형 */
+	.btn-outline-success{ border-color:#218838; color:#218838; background-color:#fff;}
+
+
+/******************** 반응형 웹에 필요한 내용 ********************/
+/* 화면이 좁아지면 아래 내용이 자동 적용되고 넗어지면 자동 해제된다*/
+
+
+	@media (max-width : 500px) {
+	/* 본문전체 적용 */	
+		body{ margin: 5px; padding: 0px;}
+		
+	/* 헤더 (회사로고부분) */	
+		.vf_header_menu div { width :21%;}
+		.vf_header_menu_search { display: none; }
+		
+	/* 네비게이션 (메뉴부분) */
+		.vf_sub_menu  {	padding: 0px;}
+		.vf_sub_menu div {font-size:18px; font-family: 'Dongle', sans-serif;}
+		
+	/* body (본문부분) */
+ 		.container{ padding: 0px; margin:0px;}	
+		.vf-wide-screen{ display: none; }
+		.vf-less-wide-screen{ display: flex; }
+		.vf-left{width: 100%;  padding: 10 0 0 0; }
+		.vf-right {width: 100%;  padding: 0px;}
+		.vf-wide700-card { width:100%; }
+		.vf-wide500-card { width:100%; }	
+		.vf-wide300-card { width:80%; }	
+		.vf_product {width:50%; height:310px;}
+		.vf_product img {width:100%; border-radius: 5px;}
+    }
+
+
+	@media (min-width : 501px) and (max-width : 767px) {
+	/* 본문전체 적용 */	
+		body{ margin: 5px; padding: 0px;}
+		
+	/* 헤더 (회사로고부분) */	
+		.vf_header_menu div { width :23%;}
+		.vf_header_menu_search { display: none; }
+		
+	/* 네비게이션 (메뉴부분) */
+		.vf_sub_menu  {	padding: 0px;}
+		.vf_sub_menu div {font-size:20px; font-family: 'Dongle', sans-serif;}
+		
+	/* body (본문부분) */
+		.container{ padding: 0px; margin:0px;}	
+		.vf-wide-screen{ display: none; }
+		.vf-less-wide-screen{ display: flex; }
+		.vf-left{width: 100%;  padding: 10 0 0 0; }
+		.vf-right {width: 100%;  padding: 0px;}
+		.vf-wide700-card { width:100%; }
+		.vf-wide500-card { width:80%; }	
+		.vf-wide300-card { width:60%; }	
+		.vf_product {width:50%; height:310px;}
+		.vf_product img {width:100%; border-radius: 5px;}
+    }
+
+    @media (min-width : 768px) and (max-width : 991px) {/*  상품이 3개 */
+/*     	.container {background-color: green} */
+		.vf_header_menu div {width: 16%;}
+		.vf-left{width: 57%; }
+		.vf-right {width: 43%;}
+		.vf-wide700-card { width: 100%; }
+		.vf-wide500-card { width: 60%; }
+		.vf-wide300-card { width: 50%; }
+		.vf_product {width:33%; height:310px;}
+		.vf_product img {width:100%; border-radius: 5px;}
+    }
+    
+    @media (min-width : 992px) and (max-width : 1199px) { /*  상품이 4개 */
+/*      .container {background-color: blue} */
+      	.vf_header_menu div {width: 18%}
+		.vf-left{width: 45%; }
+		.vf-right {width: 55%;}
+		.vf-wide700-card { width: 90%; }
+		.vf-wide500-card { width: 50%; }
+		.vf-wide300-card { width: 40%; }
+		.vf_product {width:25%; height:310px;}
+		.vf_product img {width:100%; border-radius: 5px;}
+		.slide { height: 250px; }
+    }
+    
+    @media (min-width : 1200px) and (max-width : 1399px){ /*  상품이 5개 */
+/*     	.container {background-color: red} */
+      	.vf_header_menu div {width: 19%}
+      	.vf-left{width: 40%; }
+		.vf-right {width: 60%;}
+		.vf-wide700-card { width: 80%; }
+		.vf-wide500-card { width: 45%; }
+		.vf-wide300-card { width: 35%; }
+		.vf_product {width:20%; height:310px;}
+		.vf_product img {width:100%; border-radius: 5px;}
+		.slide { height: 300px; }
+    }
+    
+    @media (min-width : 1400px){ /*  상품이 5개 */
+/*     	.container {background-color: white} */
+      	.vf_header_menu div {width: 19%}
+      	.vf-left{width: 40%; }
+		.vf-right {width: 60%;}
+		.vf-wide700-card { width: 80%; }
+		.vf-wide500-card { width: 40%; }
+		.vf-wide300-card { width: 30%; }
+		.vf_product {width:20%; height:310px;}
+		.vf_product img {width:100%; border-radius: 5px;}
+		.slide { height: 350px; }
+    }
+</script>

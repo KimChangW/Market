@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="board" type="market.model.Board" />
+		<typeAlias alias="rb" type="market.model.ReplyBoard" />
+		<typeAlias alias="cart" type="market.model.CartDTO" />
+		<typeAlias alias="category" type="market.model.CategoryDTO" />
+		<typeAlias alias="coupon" type="market.model.CouponDTO" />
+		<typeAlias alias="delivery" type="market.model.DeliveryDTO" />
+		<typeAlias alias="event" type="market.model.EventDTO" />
+		<typeAlias alias="follow" type="market.model.FollowDTO" />
+		<typeAlias alias="love" type="market.model.LoveDTO" />
+		<typeAlias alias="member" type="market.model.MemberDTO" />
+		<typeAlias alias="mycoupon" type="market.model.MycouponDTO" />
+		<typeAlias alias="order_product" type="market.model.Order_productDTO" />
+		<typeAlias alias="order_tab" type="market.model.Order_tabDTO" />
+		<typeAlias alias="product_img" type="market.model.Product_imgDTO" />
+		<typeAlias alias="product" type="market.model.ProductDTO" />
+		<typeAlias alias="qna" type="market.model.QnaDTO" />
+		<typeAlias alias="restock" type="market.model.RestockDTO" />
+		<typeAlias alias="review" type="market.model.ReviewDTO" />
+		<typeAlias alias="shop" type="market.model.ShopDTO" />
+		<typeAlias alias="md" type="market.dao.MemberDAO" />
+		<typeAlias alias="orderpage" type="market.model.OrderPageItemDTO" />
+		<typeAlias alias="order_manage" type="market.model.Order_manageDTO" />
+	</typeAliases>
+	<!-- 
+	<mappers>
+		<mapper resource="Board.xml" />
+		<mapper resource="ReplyBoard.xml" />
+	</mappers> 
+	-->
+</configuration>

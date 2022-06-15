@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="followns">
+
+    <!-- 팔로우 상점 목록에 동일한 상점이 있는 지 확인 -->
+    <select id="findFollowShop" parameterType="follow" resultType="String">
+    	select decode(count(*), 0, 'false', 'true') from follow 
+    	where m_email=#{m_email} and s_no=#{s_no}
+    </select>
+    
+    <!-- 팔로우 상점 등록 -->
+    <insert id="insert" parameterType="follow">
+    	insert into follow values (follow_seq.nextval,${s_no},'${m_email}')
+    </insert>
+
+	<select id="getTotal" parameterType="String" resultType="int">
+		select count(*) from follow where m_email=#{m_email}
+	</select>
+
+	<!-- 팔로우 상점목록 -->
+	<select id="getShopNo" parameterType="String" resultType="follow">
+		select distinct s.s_no, s_name from follow f,shop s 
+		where f.s_no=s.s_no and f.m_email = #{m_email}
+	</select>
+	
+ 	<!-- 팔로우 상점 목록 -->
+	<select id="list" parameterType="String" resultType="follow">
+		select f.*,s.s_name from follow f, shop s where f.s_no=s.s_no 
+		and f.m_email=#{m_email} 
+		order by s.s_name
+	</select>
+	
+	<!-- 팔로우 상점 개별 삭제 -->
+	<delete id="delete" parameterType="int">
+		delete from follow where f_no = #{f_no}
+	</delete>
+	
+	<!-- 팔로우 상점 전체 삭제 -->
+	<delete id="allDelete" parameterType="String">
+		delete from follow where m_email=#{m_email}
+	</delete>
+
+</mapper>

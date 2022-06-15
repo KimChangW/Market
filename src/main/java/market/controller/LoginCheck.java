@@ -1,0 +1,71 @@
+package market.controller;
+
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+public class LoginCheck extends HandlerInterceptorAdapter {
+
+	// preHandle(request,response,handler)메소드
+	// 1.Controller에서 요청(*.nhn)을 받기 전에 preHandle()가 호출되어 가로채는 역할로 사용
+	// 2.로그인 하지않고(세션이 없으면) 요청하면 로그인 폼으로 이동 하도록 해주는 역할
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+		response.setContentType("text/html; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		HttpSession session = request.getSession();
+		String requestUrl = request.getRequestURL().toString();
+
+		String id = (String) session.getAttribute("m_email");
+		String shopid = (String) session.getAttribute("s_email");
+		// 로그인 경로 제외
+		if (requestUrl.contains("loginForm.do")) {
+			return true;
+		}
+		
+
+		// 리소스 경로 제외
+		if (requestUrl.contains("/resources")) {
+			return true;
+		}
+
+		if (id == null || id.equals("")) {
+			
+			out.print("<script> alert('로그인이 필요한 서비스입니다.');</script>");
+			out.print("<script> location.href='loginForm.do'; </script>");
+			out.close();
+			
+			//response.sendRedirect("loginForm.do"); // 세션이 없으면 로그인 폼으로 이동
+			return false;
+		}
+		
+		
+		
+		return true;
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+			ModelAndView modelAndView) throws Exception {
+		// TODO Auto-generated method stub
+		super.postHandle(request, response, handler, modelAndView);
+	}
+
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.afterCompletion(request, response, handler, ex);
+	}
+	
+	
+	
+	
+	
+	
+}

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="shopns">
+	<!-- 입점신청 -->
+	<insert id="shop_insert" parameterType="shop">
+		insert into shop values (shop_seq.nextval,#{s_email},#{s_passwd},#{s_seckey},
+		#{s_name},#{s_ceo},#{s_bizno},#{s_tongsin},#{s_file,jdbcType=VARCHAR},
+		#{s_address},#{s_tel},#{s_bank},#{s_account},sysdate,'',#{s_reason,jdbcType=VARCHAR},'1',#{s_post}, #{s_profile,jdbcType=VARCHAR}, #{s_myself,jdbcType=VARCHAR})
+	</insert>
+	<!-- 판매자 정보구하기 s_email= #{s_email} and s_status='2' 로 수정해야함 -->
+	<select id="shop_select" parameterType="String" resultType="shop">
+		select * from shop where s_email= #{s_email} and (s_status='2' or s_status='m')
+	</select>
+	<!-- 관리자 list view값 구하기 -->
+	<select id="shop_select1" parameterType="String" resultType="shop">
+		select * from shop where s_email= #{s_email}
+	</select>
+	<!-- 판매자 정보 수정 -->
+	<update id="shop_update" parameterType="shop">
+		update shop set s_name=#{s_name}, s_ceo=#{s_ceo}, 
+		s_bizno=#{s_bizno}, s_tongsin=#{s_tongsin}, s_file=#{s_file,jdbcType=VARCHAR},
+		s_address=#{s_address}, s_tel=#{s_tel}, s_bank=#{s_bank}, s_account=#{s_account}, s_post=#{s_post}, s_profile=#{s_profile, jdbcType=VARCHAR}, s_myself=#{s_myself,jdbcType=VARCHAR}
+		where s_email=#{s_email}
+	</update>
+	<!-- 폐점 -->
+	<update id="shop_del" parameterType="shop">
+		update shop set s_deldate=sysdate, s_reason=#{s_reason}, s_status='3'
+		where s_email=#{s_email}
+	</update>
+	<!-- 관리자 shoplist 입점 신청 내역  -->	
+	<select id="shoplist" resultType="shop">
+		select * from shop where s_status='1' or s_status='2' 
+	</select>
+	<!-- 관리자 shoplist 회원 내역  -->	
+	<select id="shoplist1" resultType="shop">
+		select * from shop where s_status='2'
+	</select>
+	<!-- 입점 신청 총데이터 갯수 구하기 -->
+	<select id="shoptotal" parameterType="shop" resultType="int">
+		select count(*) from shop where s_status='1'
+	</select>
+	<!-- 회원 총데이터 갯수 구하기 -->
+	<select id="shoptotal2" parameterType="shop" resultType="int">
+		select count(*) from shop where s_status='2'
+	</select>
+	<!-- 체크박스로 입점승인 -->
+	<update id="shopupdate" parameterType="String">
+		update shop set s_status='2', s_regdate=sysdate where s_email=#{email}
+	
+	</update>
+	<!-- 체크박스로 강제폐점 -->
+	<update id="shopdel" parameterType="String">
+		update shop set s_status='3', s_deldate=sysdate where s_email=#{email}
+	
+	</update>
+	
+	<!-- 임시비밀번호로 수정 -->
+	<update id="shop_passwdUp" parameterType="shop">
+		update shop set s_passwd=#{s_passwd} where s_email=#{s_email} and s_ceo=#{s_ceo} and s_tel=#{s_tel}
+	
+	</update>
+	<!-- 비밀번호 수정 -->
+	<update id="shop_passwdedit" parameterType="shop">
+		update shop set s_passwd=#{s_passwd} where s_email=#{s_email}
+	</update>
+	<!-- email 찾기 -->
+	<select id="shop_emailsearch" parameterType="shop" resultType="shop">
+		select * from shop where s_ceo=#{s_ceo} and s_tel=#{s_tel}
+	
+	</select>
+	
+</mapper>

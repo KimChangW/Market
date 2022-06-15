@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="productns">
+
+<!--  MAIN구매자 전용	 -->
+	<select id="listMain" parameterType="product" resultType="product">
+			select * from (select a.*,rowNum rn from (
+				select 
+					P.p_no as p_no,
+					P.cate_no as cate_no,
+					P.s_no as s_no,
+					P.p_group_buying as p_group_buying,
+					P.p_follow_sale as p_follow_sale,
+					P.p_name as p_name,
+					P.p_detail as p_detail,
+					P.p_group_price as p_group_price,
+					P.p_sell_price as p_sell_price,
+					P.p_follow_price as p_follow_price,
+					P.p_stock as p_stock,
+					P.p_regdate as p_regdate,
+					P.p_status as p_status,
+					P.p_hit as p_hit,
+					C.cate_large as cate_large,
+					C.cate_small as cate_small,
+					PI.p_img as p_img,
+					S.s_name as s_name
+				from product P
+				   	left outer join category C on P.cate_no = C.cate_no
+				   	left outer join product_img PI on P.p_no = PI.p_no and PI.p_img_order=1
+				   	left outer join shop S on P.s_no = S.s_no
+		<where>
+			<if test="status != null">
+				p_status=#{status} 
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%' </if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+			<if test="status == null">
+				p_status='1' 
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%'</if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+		</where>			
+			 order by 
+	    <choose>
+	        <when test="orderCond == 'p_group_price_shop_ASC'">p_group_price asc</when>
+	        <when test="orderCond == 'p_group_price_ASC'">p_group_price asc</when>
+	        <when test="orderCond == 'p_follow_price_shop_ASC'">p_follow_price asc</when>
+	        <when test="orderCond == 'p_follow_price_ASC'">p_follow_price asc</when>
+	        <when test="orderCond == 'p_regdate_DESC'">p_regdate desc</when>
+	        <when test="orderCond == 'p_hit_DESC'">p_hit desc</when>
+	        <when test="orderCond == 'p_sell_ASC'">p_sell_price asc</when>
+	        <when test="orderCond == 'p_sell_DESC'">p_sell_price desc</when>
+	        <when test="orderCond == 'p_name_ASC'">p_name asc</when>
+	        <when test="orderCond == 'p_stock_ASC'">p_stock asc</when>
+	        <otherwise> p_no desc </otherwise>
+	    </choose>
+			 ) a )
+			where rn between #{startRow} and #{endRow}
+	</select>
+	<select id="getTotalMain" parameterType="product" resultType="int">
+		select count(*) from product P
+					left outer join category C on P.cate_no = C.cate_no
+ 		       		left outer join product_img PI on P.p_no = PI.p_no and PI.p_img_order=1
+ 		       		left outer join shop S on P.s_no = S.s_no
+		<where>
+			<if test="status != null">
+				p_status=#{status} 
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%' </if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+			<if test="status == null">
+				p_status='1' 
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%'</if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+		</where>	
+	</select>
+	
+<!--  SHOP매니저 전용	 -->
+	<select id="list" parameterType="product" resultType="product">
+			select * from (select a.*,rowNum rn from (
+				select 
+					P.p_no as p_no,
+					P.cate_no as cate_no,
+					P.s_no as s_no,
+					P.p_group_buying as p_group_buying,
+					P.p_follow_sale as p_follow_sale,
+					P.p_name as p_name,
+					P.p_detail as p_detail,
+					P.p_group_price as p_group_price,
+					P.p_sell_price as p_sell_price,
+					P.p_follow_price as p_follow_price,
+					P.p_stock as p_stock,
+					P.p_regdate as p_regdate,
+					P.p_status as p_status,
+					P.p_hit as p_hit,
+					C.cate_large as cate_large,
+					C.cate_small as cate_small,
+					PI.p_img as p_img,
+					S.s_name as s_name
+				from product P
+				   	left outer join category C on P.cate_no = C.cate_no
+				   	left outer join product_img PI on P.p_no = PI.p_no and PI.p_img_order=1
+				   	left outer join shop S on P.s_no = S.s_no
+		<where>
+			P.s_no=#{s_no}
+			<if test="status != null">
+				and p_status=#{status}
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%' </if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+			<if test="status == null">
+				and p_status='1'
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%'</if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+		</where>			
+			 order by 
+	    <choose>
+	        <when test="orderCond == 'p_group_price_shop_ASC'">p_group_price asc</when>
+	        <when test="orderCond == 'p_group_price_ASC'">p_group_price asc</when>
+	        <when test="orderCond == 'p_follow_price_shop_ASC'">p_follow_price asc</when>
+	        <when test="orderCond == 'p_follow_price_ASC'">p_follow_price asc</when>
+	        <when test="orderCond == 'p_regdate_DESC'">p_regdate desc</when>
+	        <when test="orderCond == 'p_hit_DESC'">p_hit desc</when>
+	        <when test="orderCond == 'p_sell_ASC'">p_sell_price asc</when>
+	        <when test="orderCond == 'p_sell_DESC'">p_sell_price desc</when>
+	        <when test="orderCond == 'p_name_ASC'">p_name asc</when>
+	        <when test="orderCond == 'p_stock_ASC'">p_stock asc</when>
+	        <otherwise> p_no desc </otherwise>
+	    </choose>
+			 ) a )
+			where rn between #{startRow} and #{endRow}
+	</select>
+	<select id="getTotal" parameterType="product" resultType="int">
+		select count(*) from product P
+					left outer join category C on P.cate_no = C.cate_no
+ 		       		left outer join product_img PI on P.p_no = PI.p_no and PI.p_img_order=1
+ 		       		left outer join shop S on P.s_no = S.s_no
+		<where>
+			P.s_no=#{s_no}
+			<if test="status != null">
+				and p_status=#{status}
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%' </if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+			<if test="status == null">
+				and p_status='1'
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%'</if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+		</where>	
+	</select>
+<!--  플랫폼 관리자 전용	 -->
+	<select id="mlist" parameterType="product" resultType="product">
+			select * from (select a.*,rowNum rn from (
+				select 
+					P.p_no as p_no,
+					P.cate_no as cate_no,
+					P.s_no as s_no,
+					P.p_group_buying as p_group_buying,
+					P.p_follow_sale as p_follow_sale,
+					P.p_name as p_name,
+					P.p_detail as p_detail,
+					P.p_group_price as p_group_price,
+					P.p_sell_price as p_sell_price,
+					P.p_follow_price as p_follow_price,
+					P.p_stock as p_stock,
+					P.p_regdate as p_regdate,
+					P.p_status as p_status,
+					P.p_hit as p_hit,
+					C.cate_large as cate_large,
+					C.cate_small as cate_small,
+					PI.p_img as p_img,
+					S.s_name as s_name
+				from product P
+				   	left outer join category C on P.cate_no = C.cate_no
+				   	left outer join product_img PI on P.p_no = PI.p_no and PI.p_img_order=1
+				   	left outer join shop S on P.s_no = S.s_no
+		<where>
+			<if test="status != null">
+				p_status=#{status}
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%' </if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+			<if test="status == null">
+				p_status='1'
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%'</if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+			<if test="s_no != null and s_no != 0">
+				and P.s_no=#{s_no}
+			</if>
+		</where>			
+			 order by 
+	    <choose>
+	        <when test="orderCond == 'p_group_price_shop_ASC'">p_group_price asc</when>
+	        <when test="orderCond == 'p_group_price_ASC'">p_group_price asc</when>
+	        <when test="orderCond == 'p_follow_price_shop_ASC'">p_follow_price asc</when>
+	        <when test="orderCond == 'p_follow_price_ASC'">p_follow_price asc</when>
+	        <when test="orderCond == 'p_regdate_DESC'">p_regdate desc</when>
+	        <when test="orderCond == 'p_hit_DESC'">p_hit desc</when>
+	        <when test="orderCond == 'p_sell_ASC'">p_sell_price asc</when>
+	        <when test="orderCond == 'p_sell_DESC'">p_sell_price desc</when>
+	        <when test="orderCond == 'p_name_ASC'">p_name asc</when>
+	        <when test="orderCond == 'p_stock_ASC'">p_stock asc</when>
+	        <otherwise> p_no desc </otherwise>
+	    </choose>
+			 ) a )
+			where rn between #{startRow} and #{endRow}
+	</select>
+	<select id="mgetTotal" parameterType="product" resultType="int">
+		select count(*) from product P
+					left outer join category C on P.cate_no = C.cate_no
+ 		       		left outer join product_img PI on P.p_no = PI.p_no and PI.p_img_order=1
+ 		       		left outer join shop S on P.s_no = S.s_no
+		<where>
+			<if test="status != null">
+				p_status=#{status}
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%' </if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+			<if test="status == null">
+				p_status='1'
+				<if test="keyword != null"> and ${search} like '%'||#{keyword}||'%'</if>
+				<if test="orderCond == 'p_group_price_ASC'"> and p_group_buying = 'Y' </if>
+				<if test="orderCond == 'p_follow_price_ASC'"> and p_follow_sale = 'Y' </if>
+			</if>
+			<if test="s_no != null and s_no != 0">
+				and P.s_no=#{s_no}
+			</if>
+		</where>	
+	</select>
+
+	<select id="select" parameterType="int" resultType="product">
+		select 
+			P.p_no as p_no,
+			P.cate_no as cate_no,
+			P.s_no as s_no,
+			P.p_group_buying as p_group_buying,
+			P.p_follow_sale as p_follow_sale,
+			P.p_name as p_name,
+			P.p_detail as p_detail,
+			P.p_group_price as p_group_price,
+			P.p_sell_price as p_sell_price,
+			P.p_follow_price as p_follow_price,
+			P.p_stock as p_stock,
+			P.p_regdate as p_regdate,
+			P.p_status as p_status,
+			P.p_hit as p_hit,
+			C.cate_large as cate_large,
+			C.cate_small as cate_small,
+			PI.p_img as p_img,
+			S.s_name as s_name
+		from product P
+		   	left outer join category C on P.cate_no = C.cate_no
+		   	left outer join product_img PI on P.p_no = PI.p_no and PI.p_img_order=1
+		   	left outer join shop S on P.s_no = S.s_no
+		where p.p_no=#{p_no}
+	</select>
+	
+	<select id="listCateNo" resultType="category">
+		select * from category order by cate_large, cate_small
+	</select>
+	
+	<select id="listCategory" parameterType="product" resultType="category">
+		select cate_small from product P
+					left outer join category C on P.cate_no = C.cate_no
+		<where>
+		p_status='1'
+			<if test="search == 'cate_large'">
+				and ${search} like '%'||#{keyword}||'%'
+			</if>
+			<if test="search == 'cate_small'">
+				and cate_large=(select cate_large from category where ${search}=#{keyword})
+			</if>
+		</where>
+		group by cate_small 
+		order by cate_small asc
+	</select>
+	<select id="getMaxNum" resultType="int">
+		select nvl(max(p_no),0) from product
+	</select>
+	
+	<insert id="insert" parameterType="product">
+		insert into product values (product_seq.nextval,#{cate_no},#{s_no},
+			#{p_group_buying},#{p_follow_sale},#{p_name},#{p_detail, jdbcType=VARCHAR},#{p_group_price},
+			#{p_sell_price},#{p_follow_price},#{p_stock},sysdate,'1',0)
+	</insert>
+
+	<update id="selectUpdate" parameterType="int">
+		update product set p_hit = p_hit+1 where p_no=#{p_no}
+	</update>
+	<update id="update" parameterType="product">
+		update product set cate_no=#{cate_no}, s_no=#{s_no}, p_group_buying=#{p_group_buying},
+			p_follow_sale=#{p_follow_sale}, p_name=#{p_name}, p_detail=#{p_detail, jdbcType=VARCHAR},
+			p_group_price=#{p_group_price}, p_sell_price=#{p_sell_price}, p_follow_price=#{p_follow_price},
+			p_stock=#{p_stock}, p_status=#{p_status} where p_no=#{p_no} 
+	</update>
+	<update id="delete" parameterType="int">
+		update product set p_status='5' where p_no=#{p_no}
+	</update>
+	
+	<insert id="insertImg" parameterType="product_img">
+		insert into product_img values (product_img_seq.nextval,#{p_no},#{p_img},#{p_img_order})
+	</insert>
+	
+	<select id="listImg" parameterType="int" resultType="product_img">
+		select * from product_img where p_no=#{p_no} order by p_img_order
+	</select>
+	
+	<select id="getShopNo" resultType="product">
+		select distinct p.s_no, s.s_name from product p, shop s 
+		where p.s_no=s.s_no order by s.s_name
+	</select>
+	
+	<update id="stop" parameterType="int">
+		update product set p_status='4' where p_no=#{p_no}
+	</update>
+	
+	<select id="getShopInfo" parameterType="product" resultType="shop">
+		select * from shop where s_name like '%'||#{keyword}||'%'
+	</select>
+	
+	<select id="getFollowShopNo" resultType="follow">
+		select distinct f.* from follow f, product p where f.s_no=p.s_no and f.s_no=#{s_no}
+	</select>
+	
+	<!-- 공동구매 팀 정보 불러오기 -->
+	<select id="getGroup" parameterType="product" resultType="order_product">
+	select * from order_product
+	where p_no = #{p_no} and op_status = '1'
+	</select>
+
+	<!-- 공동구매 첫 번째 사람 상태 업데이트 -->
+	<update id="updateGroupOrder" parameterType="order_product">
+	update order_product set op_status = '3' where op_no = #{group_op_no}
+	</update>
+</mapper>

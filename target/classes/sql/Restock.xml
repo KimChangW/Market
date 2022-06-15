@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="restockns">
+
+    <!-- 재입고신청목록에 동일한 상품이 있는 지 확인 -->
+    <select id="findRestockProduct" parameterType="restock" resultType="String">
+    	select decode(count(*), 0, 'false', 'true') from restock 
+    	where m_email=#{m_email} and p_no=#{p_no}
+    </select>
+    
+    <!-- 재입고신청 등록 -->
+    <insert id="insert" parameterType="restock">
+    	insert into restock values (restock_seq.nextval,'${m_email}',${p_no})
+    </insert>
+
+	<select id="getTotal" parameterType="String" resultType="int">
+		select count(*) from restock where m_email=#{m_email}
+	</select>
+
+	<!-- 재입고신청 상품들의 상점목록 -->
+	<select id="getShopNo" parameterType="String" resultType="restock">
+		select distinct p.s_no, s_name from restock r,product p,shop s 
+		where r.p_no=p.p_no and p.s_no=s.s_no and r.m_email = #{m_email}
+	</select>
+	
+ 	<!-- 재입고신청 상품 목록 -->
+	<select id="list" parameterType="String" resultType="restock">
+		select r.*, p.*,s.s_name,pi.p_img from restock r, product p, shop s, product_img pi where r.p_no=p.p_no 
+		and p.s_no=s.s_no and p.p_no=pi.p_no and pi.p_img_order=1 and r.m_email=#{m_email} 
+		order by p.p_name
+	</select>
+	
+	<!-- 재입고신청 상품 개별 삭제 -->
+	<delete id="delete" parameterType="int">
+		delete from restock where re_no = #{re_no}
+	</delete>
+	
+	<!-- 재입고신청 상품 전체 삭제 -->
+	<delete id="allDelete" parameterType="String">
+		delete from restock where m_email=#{m_email}
+	</delete>
+
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="review">
+
+<!-- 상품명 구하기 -->
+<select id="getProductName" parameterType="int" resultType="product">
+select * from product where p_no = #{p_no}
+</select>
+
+<!-- 리뷰 저장 -->
+<insert id="insert" parameterType="review"> 
+insert into review (r_no, p_no, m_email, r_title, r_star, r_content, r_img, r_writedate, r_hit, r_delstatus, o_no) 
+ values (review_seq.nextval, #{p_no}, #{m_email}, #{r_title}, #{r_star}, #{r_content}, #{r_img, jdbcType = VARCHAR},
+sysdate, 0, 'N', #{o_no} )
+</insert>
+
+<!-- 내가 작성한 리뷰 개수 -->
+<select id="reviewCount" parameterType="String" resultType="int">
+select count(*) from review where m_email = #{m_email} and r_delstatus = 'N'
+</select>
+
+<!-- 내가 작성한 리뷰 목록 불러오기 -->
+<select id="myReviewList" parameterType="String" resultType="review">
+select
+R.r_no as r_no,
+R.p_no as p_no,
+R.m_email as m_email,
+R.r_title as r_title,
+R.r_star as r_star,
+R.r_content as content,
+R.r_img as r_img,
+R.r_writedate as r_writedate,
+R.r_hit as r_hit,
+R.r_delstatus as r_delstatus,
+R.o_no as o_no,
+OT.o_date as o_date
+
+from review R
+left join order_tab OT on R.o_no = OT.o_no
+
+where R.m_email = #{m_email} and R.r_delstatus = 'N'
+order by R.r_writedate desc
+</select>
+
+<!-- 조회수 증가 -->
+<update id="updateHit" parameterType="int">
+update review set r_hit = r_hit + 1 where r_no = #{r_no}
+</update>
+
+<!-- 리뷰 상세 내용 불러오기 -->
+<select id="select" parameterType="int" resultType="review">
+select * from review where r_no = #{r_no}
+</select>
+ 
+<!-- 리뷰 삭제 -->
+<update id="delete" parameterType="int">
+ update review set r_delstatus = 'Y' where r_no = #{r_no}
+</update>
+
+<!-- 리뷰 중복 체크 -->
+<select id="reviewCheck" parameterType="review" resultType="review">
+select * from review where m_email = #{m_email} and p_no = #{p_no} and o_no = #{o_no} and r_delstatus = 'N'
+</select>
+ 
+<!-- 상품별 리뷰 개수 --> 
+<select id="total" parameterType="int" resultType="int">
+select count(*) from review where p_no = #{p_no}
+</select>
+
+<!-- 상품별 리뷰 목록 -->
+<select id="list" parameterType="int" resultType="review">
+select * from review where p_no = #{p_no} and r_delstatus = 'N' order by r_writedate desc
+</select>
+
+</mapper>

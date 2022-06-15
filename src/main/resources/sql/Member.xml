@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="memberns">
+   <!-- 이메일 중복검사-->
+   <select id="memberEmailCheck" resultType="member">
+   select * from member where m_email=#{m_email}
+   </select> 
+    
+   <!-- 로그인후 회원저장 -->
+   <insert id="insertMember" parameterType="member">
+   insert into member (m_email, m_passwd, m_seckey, m_name, m_tel, m_regdate, m_delstatus)
+                values(#{m_email}, #{m_passwd}, #{m_seckey}, #{m_name}, #{m_tel}, sysdate, 'N')
+   </insert>
+  
+  <!-- 로그인인증 -->
+  <select id="loginCheck" resultType="member">
+  select * from member where m_email=#{m_email} and m_delstatus='N' 
+  </select>
+  
+  <!-- 회원수정 -->
+  <update id="memberUpdate" parameterType="member">
+  update member set m_passwd=#{m_passwd} where m_email=#{m_email}
+  </update>
+  
+
+  <!-- 비밀번호찾기 -->
+  <select id="passwdSearch" resultType="member">
+  select * from member where m_email=#{m_email} and m_name=#{m_name} and m_delstatus='N' 
+  </select>
+  
+  <!-- 임시비밀번호찾기 -->
+  <update id="passwdUpdate" parameterType="member">
+  update member set m_passwd=#{m_passwd} where m_email=#{m_email} and m_name=#{m_name}
+  </update>
+  
+  <!-- 아이디찾기 -->
+  <select id="emailSearch" parameterType="member" resultType="member">
+  select * from member where m_name=#{m_name} and m_tel=#{m_tel} and m_delstatus='N' 
+  </select>
+  
+  <!-- 회원정보가져오기 -->
+  <select id="select" parameterType="String" resultType="member">
+  select * from member where m_email = #{m_email}
+   </select>
+  
+  <!-- 회원리스트 가져오기  -->
+  <select id="memberList" resultType="member">
+  select * from member
+  </select>
+<!-- 회원리스트 총 갯수 구하기 -->
+<select id = "getTotal" parameterType="member" resultType="int">
+	select count(*) from member
+</select>
+
+  <!-- 리스트에서 체크박스 강제탈퇴 -->
+	<update id="memberListCheck" parameterType="String">
+ 	update member set m_delstatus='Y' where m_email=#{email}
+	</update>
+
+  <!-- 회원삭제 -->
+   <update id="deleteMember" parameterType="member">
+  	update member set m_delstatus='Y', m_deldate = sysdate where m_email = #{m_email} and m_passwd = #{m_passwd} and m_del_why=#{m_del_why}
+   </update>
+
+  <!-- 카카오 email DB저장 -->
+   <insert id="kakaoinsert" parameterType="member">
+   insert into member (m_email, m_passwd, m_seckey, m_name, m_tel, m_regdate, m_delstatus)
+                values(#{m_email}, '0', '1111', '홍수진', '01011111111', sysdate, 'N')
+   </insert>
+   
+   <!-- 네이버 회원이름, email DB저장 -->
+   <insert id="naverinsert" parameterType="member">
+   insert into member (m_email, m_passwd, m_seckey, m_name, m_tel, m_regdate, m_delstatus)
+                values(#{m_email}, '0', '1111', #{m_name}, '01011111111', sysdate, 'N')
+   </insert>
+      
+     </mapper>
